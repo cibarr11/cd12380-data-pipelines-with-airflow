@@ -1,3 +1,4 @@
+#Commit check
 from datetime import datetime, timedelta
 import pendulum
 import os
@@ -6,6 +7,7 @@ from airflow.operators.dummy import DummyOperator
 from operators import (StageToRedshiftOperator, LoadFactOperator,
                        LoadDimensionOperator, DataQualityOperator)
 from helpers import SqlQueries
+
 
 default_args = {
     'owner': 'udacity',
