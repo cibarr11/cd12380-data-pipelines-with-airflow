@@ -8,6 +8,16 @@ from operators import (StageToRedshiftOperator, LoadFactOperator,
                        LoadDimensionOperator, DataQualityOperator)
 from helpers import SqlQueries
 
+# Add the AWS S3 Bucket information:
+S3_BUCKET = "cibarra"
+S3_REGION  = "us-east-1"
+S3_LOG_PREFIX  = "log-data"
+S3_SONG_PREFIX = "song-data"
+LOG_JSONPATH  = f"s3://cibarra/log_json_path.json"
+
+# Authentication info
+AWS_CONN_ID = "aws_credentials"
+IAM_ROLE_ARN = None
 
 default_args = {
     'owner': 'udacity',
