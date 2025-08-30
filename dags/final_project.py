@@ -17,7 +17,7 @@ LOG_JSONPATH  = f"s3://cibarra/log_json_path.json"
 
 # Authentication info
 AWS_CONN_ID = "aws_credentials"
-IAM_ROLE_ARN = None
+IAM_ROLE_ARN = None 
 
 default_args = {
     'owner': 'udacity',

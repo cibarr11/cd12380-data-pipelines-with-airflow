@@ -27,8 +27,7 @@ On the Airflow web server UI, use `airflow` for both username and password.
 ## Getting Started with the Project
 1. The project template package comprises three key components:
    * The **DAG template** includes imports and task templates but lacks task dependencies.
-   * The **operators** folder with operator templates.
-   * A **helper class** for SQL transformations.
+   * The **operators** folder with operator  nsformations.
 
 1. With these template files, you should see the new DAG in the Airflow UI, with a graph view resembling the screenshot below:
 ![Project DAG in the Airflow UI](assets/final_project_dag_graph1.png)
