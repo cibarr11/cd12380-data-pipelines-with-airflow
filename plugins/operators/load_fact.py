@@ -29,4 +29,4 @@ class LoadFactOperator(BaseOperator):
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
         sql = self.insert_sql
         redshift.run(sql)
-        self.log.info('LoadFactOperator executed successfully')
+        self.log.info('LoadFactOperator executed')
