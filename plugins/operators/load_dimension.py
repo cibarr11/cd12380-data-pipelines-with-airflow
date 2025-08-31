@@ -28,11 +28,10 @@ class LoadDimensionOperator(BaseOperator):
 
     def execute(self, context):
         if not self.table or not self.insert_sql:
-            raise ValueError("table and insert_sql are required")
+            raise ValueError("parameter error")
         hook = PostgresHook(postgres_conn_id=self.redshift_conn_id)
         if not self.append_only:
             hook.run(f"TRUNCATE TABLE {self.table};")
         sql = f"INSERT INTO {self.table} {self.insert_sql}"
         hook.run(sql)
-        self.log.info("Dimension table %s load complete", self.table)
         

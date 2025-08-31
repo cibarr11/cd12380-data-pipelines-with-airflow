@@ -106,22 +106,30 @@ def final_project():
         append_only=False
     )
 
+    dq_checks = [
+            {"check_sql": "SELECT COUNT(*) FROM songplays;", "op": ">", "expected value": 0, "desc": "songplays non-empty"},
+            {"check_sql": "SELECT COUNT(*) FROM users;", "op": ">", "expected value": 0, "desc": "users non-empty"},
+            {"check_sql": "SELECT COUNT(*) FROM songs;", "op": ">", "expected value": 0, "desc": "songs non-empty"},
+            {"check_sql": "SELECT COUNT(*) FROM artists;", "op": ">", "expected value": 0, "desc": "artists non-empty"},
+            {"check_sql": "SELECT COUNT(*) FROM time;", "op": ">", "expected value": 0, "desc": "time non-empty"},
+            {"check_sql": "SELECT COUNT(*) FROM users WHERE userid IS NULL;", "op": "=", "expected value": 0, "desc": "no NULL userids"},
+        ]
+
     run_quality_checks = DataQualityOperator(
-        task_id="run_data_quality_checks",
-        redshift_conn_id=REDSHIFT_CONN_ID,
+            task_id="run_quality_checks",
+            redshift_conn_id=REDSHIFT_CONN_ID,
+            tests=dq_checks,
+        )
 
-        tables=["songplays", "users", "songs", "artists", "time"]
-        
-    )
-
-    # Dependencies for reference on dag flow
+    # Dependencies
     start_execution >> [stage_events_to_redshift, stage_songs_to_redshift]
     [stage_events_to_redshift, stage_songs_to_redshift] >> load_songplays_table
     load_songplays_table >> [
         load_user_dimension_table,
         load_song_dimension_table,
         load_artist_dimension_table,
-        load_time_dimension_table
+        load_time_dimension_table,
     ] >> run_quality_checks >> end_execution
 
+#Call function
 final_project_dag = final_project()
