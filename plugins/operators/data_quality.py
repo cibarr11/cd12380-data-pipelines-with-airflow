@@ -22,22 +22,20 @@ class DataQualityOperator(BaseOperator):
         self.tables = tables
 
     def execute(self, context):
-        # Example logic (to be replaced with actual data quality checks)
-        self.log.info('DataQualityOperator not implemented yet')
-
-        # verify for failures
+        if not self.tables:
+            self.log.warning("No tables provided for data quality checks.")
+            return
+        hook = PostgresHook(postgres_conn_id=self.redshift_conn_id)
+        failures = []
         for table in self.tables:
-            # define empty list to store the failures
-            failures = []
-            # failure to verify is the table is not empty
-            verify_table = hook.get_first(f"SELECT COUNT(*) FROM {table}")
+            self.log.info("Veriyfing for non-empty rows", table)
+            records = hook.get_first(f"SELECT COUNT(*) FROM {table};")
+            if records is None or len(records) == 0:
+                failures.append(f"{table}:no results")
+            elif records[0] is None or records[0] <= 0:
+                failures.append(f"{table}: contains 0 rows")
 
-            if verify_table is None or len(verify_table) == 0:
-                failures.append(f"{table}: no data")
-            elif verify_table[0] is None or verify_table[0] <= 0:
-                failures.append(f"{table}: incorrect number of rows")
-        
         if failures:
-            raise ValueError("Failures found")
-        else:
-            self.log.info("All data quality checks passed.")
+            message = "Data quality check failed"
+            raise ValueError(messages)
+        self.log.info("All data quality checks passed")

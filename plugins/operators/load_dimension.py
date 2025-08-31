@@ -27,15 +27,12 @@ class LoadDimensionOperator(BaseOperator):
         self.append_only = append_only
 
     def execute(self, context):
-        # Create a PostgresHook to connect to Redshift
+        if not self.table or not self.insert_sql:
+            raise ValueError("table and insert_sql are required")
         hook = PostgresHook(postgres_conn_id=self.redshift_conn_id)
         if not self.append_only:
-            # truncating table before running
-            hook.run(f"truncate the following: {self.table}")
-        # Create the sql statement for refernce into the table
-        sql = f"inserting into the table {self.table} {self.insert_sql}"
-        # Log the reference that data is being added into the table
-        self.log.info("Adding data into the table %s", self.table)
-        # Execute
+            hook.run(f"TRUNCATE TABLE {self.table};")
+        sql = f"INSERT INTO {self.table} {self.insert_sql}"
         hook.run(sql)
+        self.log.info("Dimension table %s load complete", self.table)
         

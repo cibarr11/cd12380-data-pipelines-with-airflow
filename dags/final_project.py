@@ -13,7 +13,7 @@ default_args = {
     'start_date': pendulum.now(),
     "depends_on_past": False,
     "retries": 3,
-    "retry_delay": timedelta(minutes=2),
+    "retry_delay": timedelta(minutes=5),
     "email_on_retry": False,
 }
 
@@ -124,5 +124,4 @@ def final_project():
         load_time_dimension_table
     ] >> run_quality_checks >> end_execution
 
-final_project_dag = final_project()
 final_project_dag = final_project()

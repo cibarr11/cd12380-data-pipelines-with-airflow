@@ -1,9 +1,11 @@
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
+from airflow.hooks.base import BaseHook
 
 class StageToRedshiftOperator(BaseOperator):
     ui_color = '#358140'
+    template_fields = ("s3_key",)
 
     @apply_defaults
     def __init__(self,
@@ -44,11 +46,11 @@ class StageToRedshiftOperator(BaseOperator):
 
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
         aws_conn = BaseHook.get_connection(self.aws_credentials_id)
-
+        rendered_key = self.s3_key.format(**context)
         s3_path = f"s3://{self.s3_bucket}/{self.s3_key}"
 
         if self.truncate:
-            redshift.run(self.table)
+            redshift.run(f"TRUNCATE TABLE {self.table};")
 
         #access the aws credentials
         access_key = aws_conn.login
